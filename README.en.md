@@ -10,7 +10,7 @@
 ![issues](https://img.shields.io/github/issues/Joey-Tong/dsh-pulse)
 ![slot](https://img.shields.io/badge/slot-conversation.input.dock-8b5cf6)
 
-<p align="center"><img src="icon.png" width="200" alt="dsh-pulse icon"></p>
+<p align="center"><img src="assets/icon.png" width="200" alt="dsh-pulse icon"></p>
 
 **dsh-pulse** is a session activity status bar for the
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web GUI.

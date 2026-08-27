@@ -10,7 +10,7 @@
 ![issues](https://img.shields.io/github/issues/Joey-Tong/dsh-pulse)
 ![slot](https://img.shields.io/badge/slot-conversation.input.dock-8b5cf6)
 
-<p align="center"><img src="icon.png" width="200" alt="dsh-pulse 图标"></p>
+<p align="center"><img src="assets/icon.png" width="200" alt="dsh-pulse 图标"></p>
 
 **dsh-pulse** 是为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web 界面打造的会话律动状态栏。一条音乐播放器风格的均衡器条带位于 composer 卡片正上方，随当前会话实时律动——流式输出、思考、工具调用、你的输入——配合一组紧凑的状态标签显示网络、等待交互和响应停滞。
 
