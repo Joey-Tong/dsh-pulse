@@ -88,9 +88,9 @@ body[data-ds-dark-theme] .chip {
   flex: none;
 }
 
-/* Corner resize: a hover-revealed drag zone at the top-right (no layout
-   footprint). Drag diagonally/vertically/horizontally to scale; the corner
-   bracket mark hints it is stretchable. */
+/* Corner resize: an invisible drag zone at the top-right (no layout
+   footprint). It shows no mark — hovering it flips the cursor to nesw-resize,
+   which is the affordance; drag to scale both axes. */
 .resize {
   position: absolute;
   top: 0;
@@ -98,20 +98,6 @@ body[data-ds-dark-theme] .chip {
   width: calc(32px * var(--pulse-scale-h, 1));
   height: calc(30px * var(--pulse-scale-h, 1));
   cursor: nesw-resize;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-.wrap:hover .resize,
-.resize:focus-visible {
-  opacity: 0.4;
-}
-.cornerMark {
-  position: absolute;
-  top: calc(3px * var(--pulse-scale-h, 1));
-  right: calc(3px * var(--pulse-scale-h, 1));
-  width: calc(15px * var(--pulse-scale-h, 1));
-  height: calc(15px * var(--pulse-scale-h, 1));
-  color: rgba(255, 255, 255, 0.4);
 }
 
 .dotOutput { background: hsl(187 88% 58%); }

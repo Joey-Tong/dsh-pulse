@@ -442,9 +442,6 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
           else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); setScaleH(s => clamp(s - 0.05, SCALE_H_MIN, SCALE_H_MAX)) }
         }}
       >
-        <svg className={css.cornerMark} viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M4 2 H14 V12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
       </div>
     </div>
   )
