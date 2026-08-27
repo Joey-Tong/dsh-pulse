@@ -86,37 +86,30 @@ body[data-ds-dark-theme] .chip {
   flex: none;
 }
 
-/* Vertical size grip: revealed on hover, drag up/down (or arrow keys) to
-   scale the strip. Stays out of the way until the pointer is over the bar. */
+/* Corner resize: a hover-revealed drag zone at the top-right (no layout
+   footprint). Drag diagonally/vertically/horizontally to scale; the corner
+   bracket mark hints it is stretchable. */
 .resize {
   position: absolute;
   top: 0;
   right: 0;
-  /* A small top-right corner notch — big enough to grab, small enough to
-     stay clear of the chips below it. */
-  width: calc(26px * var(--pulse-scale-h, 1));
-  height: calc(15px * var(--pulse-scale-h, 1));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-start;
-  gap: calc(2px * var(--pulse-scale-h, 1));
-  padding: calc(4px * var(--pulse-scale-h, 1)) calc(5px * var(--pulse-scale-h, 1)) 0 0;
-  box-sizing: border-box;
+  width: calc(32px * var(--pulse-scale-h, 1));
+  height: calc(30px * var(--pulse-scale-h, 1));
   cursor: nesw-resize;
   opacity: 0;
   transition: opacity 0.15s ease;
 }
 .wrap:hover .resize,
 .resize:focus-visible {
-  opacity: 0.5;
+  opacity: 0.55;
 }
-.handleDot {
-  width: calc(3px * var(--pulse-scale-h, 1));
-  height: calc(3px * var(--pulse-scale-h, 1));
-  border-radius: 50%;
-  background: currentColor;
-  color: rgba(255, 255, 255, 0.7);
+.cornerMark {
+  position: absolute;
+  top: calc(3px * var(--pulse-scale-h, 1));
+  right: calc(3px * var(--pulse-scale-h, 1));
+  width: calc(16px * var(--pulse-scale-h, 1));
+  height: calc(16px * var(--pulse-scale-h, 1));
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .dotOutput { background: hsl(187 88% 58%); }

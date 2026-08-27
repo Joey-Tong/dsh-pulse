@@ -442,9 +442,10 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
           else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); setScaleH(s => clamp(s - 0.05, SCALE_H_MIN, SCALE_H_MAX)) }
         }}
       >
-        <span className={css.handleDot} />
-        <span className={css.handleDot} />
-        <span className={css.handleDot} />
+        <svg className={css.cornerMark} viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M3 2 H14 V13" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+          <path d="M9 6 H11 V8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
       </div>
     </div>
   )
