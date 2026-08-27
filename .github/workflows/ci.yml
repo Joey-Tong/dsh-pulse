@@ -5,6 +5,7 @@ on:
   pull_request:
 
 jobs:
+  # Fast: the harness-independent pure-logic tests run anywhere.
   test:
     runs-on: ubuntu-latest
     steps:
@@ -17,6 +18,34 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # typecheck/build need a DeepSeek Harness checkout (tsconfig paths);
-      # the pure unit tests run standalone anywhere.
       - run: pnpm test
+
+  # Full: typecheck + build need the DeepSeek Harness checkout (tsconfig
+  # paths resolve @deepseek-ai/* types against it). Clone it, build it so
+  # lib/types exist, then run the plugin's full verify. Heavier than `test`.
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone DeepSeek Harness (pinned to the type-graph commit)
+        run: |
+          git init ../deepseek-harness
+          git -C ../deepseek-harness remote add origin https://github.com/deepseek-ai/deepseek-harness.git
+          git -C ../deepseek-harness fetch --depth 1 origin 47f943859bef60e4160492346772ded9b24f765a
+          git -C ../deepseek-harness checkout FETCH_HEAD
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install and build harness (emits lib/types)
+        run: |
+          cd ../deepseek-harness
+          pnpm install
+          pnpm build
+      - name: Install and verify plugin
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm verify

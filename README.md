@@ -1,33 +1,41 @@
-# dsh-pulse · 会话律动状态栏
+# dsh-pulse · Session activity status bar
 
 ![license](https://img.shields.io/badge/license-MIT-8b5cf6)
-![position](https://img.shields.io/badge/slot-conversation.input.dock-8b5cf6)
+![npmmirror](https://img.shields.io/npm/v/dsh-pulse?registry=https://registry.npmmirror.com&label=npmmirror)
+![stars](https://img.shields.io/github/stars/Joey-Tong/dsh-pulse)
+![issues](https://img.shields.io/github/issues/Joey-Tong/dsh-pulse)
+![slot](https://img.shields.io/badge/slot-conversation.input.dock-8b5cf6)
 
-A session activity status bar for the DeepSeek Harness web GUI. A
-music-player-style equalizer strip sits above the composer card and pulses
+**dsh-pulse** is a session activity status bar for the
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web GUI.
+A music-player-style equalizer strip sits above the composer card and pulses
 with what the current session is doing right now — streaming output,
 reasoning, tool calls, your typing — plus compact status chips for network
-state, pending interactions, and stuck responses. The chip cluster stacks
-vertically (at most two rows; extra chips wrap into a new column) so it
-barely eats the equalizer's width, and the "network OK" chip yields while
-activity chips are visible (connection warnings always stay).
+state, pending interactions, and stuck responses.
+
+The chip cluster stacks vertically (at most two rows; extra chips wrap into a
+new column) so it barely eats the equalizer's width, and the "network OK" chip
+yields while activity chips are visible (connection warnings always stay).
 
 ## What it shows
 
 | Channel | Source | Look |
 | --- | --- | --- |
-| 输出速度 | streamed `partial` text characters | cyan bars + `输出 N 字符/秒` chip |
-| 思考速度 | streamed `reasoning` characters | violet bars + `思考 N 字符/秒` chip |
-| 工具 | `runningCalls` transitions | amber bars + `工具 ×N` chip |
-| 用户输入 | draft-length deltas | green bars + `输入 N 字符/秒` chip |
-| 网络 | Host-description observable | chip: `网络正常` / `连接中` / `网络重连中` (strip turns steel gray) |
-| 等待 | pending interactions | amber hue + `等待确认` / `等待回应` chip |
-| 卡住 | running with no activity for 8s | red hue + pulsing `响应停滞` chip |
+| Output speed | streamed `partial` text characters | cyan bars + `Output N chars/s` chip |
+| Thinking speed | streamed `reasoning` characters | violet bars + `Thinking N chars/s` chip |
+| Tools | `runningCalls` transitions | amber bars + `Tools ×N` chip |
+| User input | draft-length deltas | green bars + `Typing N chars/s` chip |
+| Network | Host-description observable | chip: `Network OK` / `Connecting` / `Reconnecting` (strip turns steel gray) |
+| Waiting | pending interactions | amber hue + `Awaiting approval` / `Awaiting input` chip |
+| Stuck | running with no activity for 8s | red hue + pulsing `Response stalled` chip |
 
-The bar itself is a translucent glass strip (backdrop blur, theme-aware
-surface) and honors `prefers-reduced-motion` (idle breathing stops; only real
-activity moves). All animation runs on a `requestAnimationFrame` loop owned by
-the mounted component; listeners, loops, and observers dispose with it.
+The bar is a translucent glass strip (backdrop blur, theme-aware surface) and
+honors `prefers-reduced-motion` (idle breathing stops; only real activity
+moves). All animation runs on a `requestAnimationFrame` loop owned by the
+mounted component; listeners, loops, and observers dispose with it.
+
+Copy follows the harness locale system (`ctx.locale`), so all labels switch
+language with the GUI language setting (zh/en dictionaries ship).
 
 ## Requirements
 
@@ -49,12 +57,20 @@ dsh plugin --profile web add link:/path/to/dsh-pulse
 Restart the GUI (`dsh web`) so the new bundle layer activates. The status bar
 appears above the composer card in every session.
 
-### Git distribution note
+> **This repo is install-ready.** Others can run the `github:Joey-Tong/dsh-pulse`
+> command directly — GitHub distribution fetches the source, and because
+> `lib/` (the built bundle) is committed and the `exports` point at it, no
+> build step, `prepare` script, or pnpm `allowBuilds` gate is needed at
+> install time.
 
-This repo ships the built `lib/` inside the repository (the exports point at
-`lib/client.js` / `lib/index.js`), so a Git install works with zero build
-steps — no `prepare` script, no pnpm `allowBuilds` gate. Keep `lib/` fresh
-before pushing: `pnpm build`.
+## What the repo needs vs. what it ships
+
+Install-critical files are only `package.json` (plugin manifest +
+`dsh.bundle`/`dsh.client`), `cordis.patch.yml` (the patch layer), and `lib/`
+(the built bundle the `exports` point at). Everything else — `src/`, `tests/`,
+the `tsconfig*.json`/`tsdown.config.ts` build config, `scripts/`, the CI
+workflow — exists for open source transparency, contributions, and CI, and is
+not loaded at install time.
 
 ## Development
 
@@ -67,13 +83,13 @@ pnpm test           # unit tests for the meter/palette/geometry pure logic
 pnpm verify         # typecheck + build + test
 ```
 
-Type-only imports resolve against the harness checkout at
+Type-only imports resolve against a DeepSeek Harness checkout at
 `../deepseek-harness` (tsconfig `paths`); values never do — the browser
 module table answers every runtime import (`react`, `@deepseek-ai/cordis`,
 slots, runtime, …), enforced at build time by the bundled purity gate.
 Because type resolution points at a local harness checkout, `pnpm typecheck`
 and `pnpm build` need one present; `pnpm test` (the pure logic) runs anywhere
-and is what CI runs.
+and is what the fast CI job runs.
 
 ### Layout
 
