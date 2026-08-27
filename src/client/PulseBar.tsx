@@ -443,8 +443,7 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
         }}
       >
         <svg className={css.cornerMark} viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M3 2 H14 V13" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
-          <path d="M9 6 H11 V8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M4 2 H14 V12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </div>
     </div>
