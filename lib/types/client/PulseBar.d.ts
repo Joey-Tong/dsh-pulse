@@ -29,6 +29,12 @@ export declare const RATE_CHIP_FLOOR = 1;
 export declare const TYPING_CHIP_FLOOR = 2;
 /** Chips re-render cadence and stuck-check cadence. */
 export declare const SUMMARY_INTERVAL_MS = 250;
+/** Vertical size factor: users may shrink or grow the whole strip. Bounded so
+ *  the bar stays usable (and the chips never overwhelm the composer). */
+export declare const SCALE_MIN = 0.6;
+export declare const SCALE_MAX = 1.6;
+/** Scale change per pointer-pixel of vertical drag. */
+export declare const SCALE_PER_PX = 0.008;
 /** One tick's chip/aria summary. */
 export interface PulseSummary {
     readonly outputRate: number;

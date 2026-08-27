@@ -11,6 +11,7 @@ export declare const zh: {
     'chip.pendingApproval': string;
     'chip.pendingOther': string;
     'chip.stuck': string;
+    'size.drag': string;
     'aria.idle': string;
     'aria.running': string;
     'aria.stuck': string;
@@ -35,6 +36,7 @@ export declare const en: {
     'chip.pendingApproval': string;
     'chip.pendingOther': string;
     'chip.stuck': string;
+    'size.drag': string;
     'aria.idle': string;
     'aria.running': string;
     'aria.stuck': string;

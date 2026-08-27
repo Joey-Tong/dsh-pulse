@@ -119,6 +119,9 @@ scripts/tsdown.client.ts  vendored harness client-bundle builder (MIT)
 - Stuck threshold (8s) and chip floors are constants in `PulseBar.tsx`; the
   client fiber currently receives no patch config in this preview, so there
   is no config surface yet.
+- Hover the strip's **top-right corner** and drag **vertically** to scale the
+  height (0.6x–1.6x), or use `↑`/`↓` when focused; the preference is stored
+  per-browser in `localStorage`.
 - Network state comes from `ctx.connection.hostDescription` (undefined while
   (re)connecting), not from per-frame frames.
 - License MIT. The client-bundle builder in `scripts/tsdown.client.ts` is

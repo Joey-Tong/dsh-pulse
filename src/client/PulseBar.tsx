@@ -13,6 +13,7 @@
  */
 
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import type { HostDescriptionSource } from '@deepseek-ai/dsh-client-connection/client'
 import type {
   ConversationSnapshot, PendingInteraction,
@@ -48,6 +49,30 @@ export const TYPING_CHIP_FLOOR = 2
 
 /** Chips re-render cadence and stuck-check cadence. */
 export const SUMMARY_INTERVAL_MS = 250
+
+/** Vertical size factor: users may shrink or grow the whole strip. Bounded so
+ *  the bar stays usable (and the chips never overwhelm the composer). */
+export const SCALE_MIN = 0.6
+export const SCALE_MAX = 1.6
+/** Scale change per pointer-pixel of vertical drag. */
+export const SCALE_PER_PX = 0.008
+
+/** localStorage key for the per-user size preference. */
+const SCALE_STORAGE_KEY = 'dsh-pulse:scale'
+
+/** Clamp a raw scale into the supported range. */
+function clampScale(value: number): number {
+  if (value < SCALE_MIN) return SCALE_MIN
+  if (value > SCALE_MAX) return SCALE_MAX
+  return value
+}
+
+/** Load the persisted size preference (default 1). */
+function loadScale(): number {
+  if (typeof localStorage === 'undefined') return 1
+  const raw = Number(localStorage.getItem(SCALE_STORAGE_KEY))
+  return Number.isFinite(raw) && raw > 0 ? clampScale(raw) : 1
+}
 
 /** One tick's chip/aria summary. */
 export interface PulseSummary {
@@ -113,6 +138,13 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
 
   const [network, setNetwork] = useState<NetworkState>('connecting')
   const [summary, setSummary] = useState<PulseSummary>(EMPTY_SUMMARY)
+  const [scale, setScale] = useState<number>(loadScale)
+  const dragRef = useRef<{ y: number; scale: number } | null>(null)
+
+  // Persist the per-user size preference on every change (drag or keyboard).
+  useEffect(() => {
+    try { localStorage.setItem('dsh-pulse:scale', String(scale)) } catch { /* ignore */ }
+  }, [scale])
 
   // Feed the meter from snapshot deltas. The dock dispatcher re-renders this
   // entry on every session-store publish (partial chunks land at animation
@@ -300,6 +332,7 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
       role="group"
       aria-label={ariaLabel}
       data-dsh-pulse
+      style={{ '--pulse-scale': String(scale) } as CSSProperties}
     >
       <canvas ref={canvasRef} className={css.canvas} aria-hidden="true" />
       <div className={css.chips}>
@@ -345,6 +378,39 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
             {t('chip.typing', { rate: Math.round(typingRate) })}
           </span>
         )}
+      </div>
+      {/* Corner resize: an absolute, hover-revealed drag zone at the top-right
+          — no layout footprint; drag up/down (or arrow keys) to scale. */}
+      <div
+        className={css.resize}
+        role="slider"
+        aria-label={t('size.drag')}
+        aria-valuemin={SCALE_MIN * 100}
+        aria-valuemax={SCALE_MAX * 100}
+        aria-valuenow={Math.round(scale * 100)}
+        tabIndex={0}
+        title={t('size.drag')}
+        onPointerDown={(e) => {
+          dragRef.current = { y: e.clientY, scale }
+          e.currentTarget.setPointerCapture(e.pointerId)
+        }}
+        onPointerMove={(e) => {
+          const d = dragRef.current
+          if (d === null) return
+          // Dragging up (negative dy) grows the strip, like pulling a
+          // top-right corner handle upward.
+          setScale(clampScale(d.scale - (e.clientY - d.y) * SCALE_PER_PX))
+        }}
+        onPointerUp={() => { dragRef.current = null }}
+        onPointerCancel={() => { dragRef.current = null }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); setScale(s => clampScale(s + 0.05)) }
+          else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); setScale(s => clampScale(s - 0.05)) }
+        }}
+      >
+        <span className={css.handleDot} />
+        <span className={css.handleDot} />
+        <span className={css.handleDot} />
       </div>
     </div>
   )

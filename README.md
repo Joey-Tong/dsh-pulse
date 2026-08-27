@@ -88,6 +88,7 @@ scripts/tsdown.client.ts  移植自官方的 client-bundle 构建器（MIT）
 
 - 接缝为 `conversation.input.dock`（composer 卡片上方独占一行），由 `@deepseek-ai/dsh-client-ui-conversation` 声明；官方 stats line 保留自己的 `composer.dock` 接缝不受影响。
 - 卡住阈值（8s）和标签阈值是 `PulseBar.tsx` 里的常量；当前预览下 client fiber 收不到 patch config，因此暂无配置面。
+- 悬停律动条**右上角**并**上下拖动**可等比例缩放高度（0.6x–1.6x），或用键盘 `↑/↓`；偏好按浏览器记忆在 `localStorage`。
 - 网络状态来自 `ctx.connection.hostDescription`（连接中为 undefined），不做逐帧轮询。
 - MIT 许可。`scripts/tsdown.client.ts` 移植自官方 DeepSeek Harness 构建助手（MIT，© DeepSeek）。
 
