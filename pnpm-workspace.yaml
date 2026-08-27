@@ -1,0 +1,4 @@
+# Standalone plugin repo: the harness packages it peers with are not
+# published to npm (and never should be resolved from the registry) — the web
+# shell's module table answers them at runtime. Never auto-install peers.
+autoInstallPeers: false

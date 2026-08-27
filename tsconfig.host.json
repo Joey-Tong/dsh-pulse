@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    "declaration": true,
+    "declarationDir": "lib/types",
+    "rootDir": "src",
+    "noEmit": false,
+    "emitDeclarationOnly": false
+  },
+  "include": ["src/index.ts", "src/css-modules.d.ts"]
+}

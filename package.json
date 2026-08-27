@@ -1,0 +1,82 @@
+{
+  "name": "dsh-pulse",
+  "description": "A session activity status bar for the DeepSeek Harness web GUI: an audio-visualizer-style equalizer that pulses with output/thinking/tool/typing activity, network state, and stuck detection.",
+  "version": "0.1.0",
+  "type": "module",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "activity",
+    "status-bar",
+    "equalizer",
+    "web"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joey-Tong/dsh-pulse.git"
+  },
+  "homepage": "https://github.com/Joey-Tong/dsh-pulse",
+  "bugs": {
+    "url": "https://github.com/Joey-Tong/dsh-pulse/issues"
+  },
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "lib/types/**/*.d.ts",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.host.json && tsc -p tsconfig.client.json && tsc -p tsconfig.test.json",
+    "build": "tsc -p tsconfig.host.json && tsc -p tsconfig.client.json && tsdown",
+    "watch": "tsdown --watch",
+    "test": "vitest run",
+    "verify": "pnpm typecheck && pnpm build && pnpm test"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-client-connection": "*",
+    "@deepseek-ai/dsh-client-locale": "*",
+    "@deepseek-ai/dsh-client-runtime": "*",
+    "@deepseek-ai/dsh-client-ui-conversation": "*",
+    "@deepseek-ai/dsh-client-ui-slots": "*",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "@types/react": "~18.3.1",
+    "lightningcss": "^1.32.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "license": "MIT"
+}

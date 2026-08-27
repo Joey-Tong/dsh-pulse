@@ -1,0 +1,123 @@
+/* dsh-pulse status bar: a compact pill of translucent glass above the
+   composer card, hosting the equalizer canvas and the activity chips.
+   Colors adapt to the harness theme via body[data-ds-dark-theme]. */
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  /* Align with the composer card itself (the input box the user asked to
+     match): the same variable the input card sizes to. */
+  max-width: var(--dsh-composer-card-max-width, 780px);
+  margin: 0 auto;
+  padding: 3px 14px;
+  /* Rounded rectangle (16px corners): a normal card radius, not a pill or
+     an ellipse. A hairline border keeps the outline defined while the
+     layered glass background (top-lit over the dark base) carries the
+     softness. */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 60%, rgba(255, 255, 255, 0.06)),
+    rgba(16, 20, 30, 0.50);
+  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+body[data-ds-dark-theme] .wrap {
+  border-color: rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 60%, rgba(255, 255, 255, 0.05)),
+    rgba(13, 17, 27, 0.55);
+}
+
+.canvas {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Slim at 30px (~24px swing, BAR_PAD_Y 3); no clip-path — the inner field
+     keeps its right-angle corners. */
+  height: 30px;
+  display: block;
+}
+
+.chips {
+  flex: 0 0 auto;
+  /* Column-major wrap: chips stack vertically (最多两层), and only when a
+     third chip appears does it wrap into a new column to the right — the
+     cluster stays two chips tall and as narrow as possible, leaving the
+     width to the equalizer. */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-height: 37px;
+  gap: 3px 6px;
+  max-width: 70%;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 13px;
+  white-space: nowrap;
+  color: rgba(226, 232, 240, 0.82);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+body[data-ds-dark-theme] .chip {
+  color: rgba(226, 232, 240, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dotOutput { background: hsl(187 88% 58%); }
+.dotThinking { background: hsl(262 82% 68%); }
+.dotTools { background: hsl(38 92% 58%); }
+.dotTyping { background: hsl(152 78% 50%); }
+.dotNetwork { background: hsl(150 70% 48%); }
+.dotNetworkBad { background: hsl(4 84% 60%); }
+.dotNetworkWarn { background: hsl(38 92% 58%); }
+.dotStuck { background: hsl(4 84% 60%); }
+
+.chipStuck {
+  animation: pulse-stuck 1.2s ease-in-out infinite;
+  border-color: hsla(4, 84%, 60%, 0.45);
+}
+
+@keyframes pulse-stuck {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .chips {
+    max-width: 55%;
+  }
+  .chipHideNarrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chipStuck {
+    animation: none;
+  }
+}

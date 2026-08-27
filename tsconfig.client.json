@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "lib/types",
+    "rootDir": "src"
+  },
+  "include": ["src/client", "src/css-modules.d.ts"]
+}
