@@ -6,14 +6,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: calc(10px * var(--pulse-scale, 1));
+  gap: calc(10px * var(--pulse-scale-h, 1));
   width: 100%;
   box-sizing: border-box;
   /* Align with the composer card itself (the input box the user asked to
      match): the same variable the input card sizes to. */
-  max-width: var(--dsh-composer-card-max-width, 780px);
+  /* Width is user-resizable too: --pulse-scale-w scales the strip's length (0.5x-1.5x of the composer-card width). */
+  max-width: calc(var(--dsh-composer-card-max-width, 780px) * var(--pulse-scale-w, 1));
   margin: 0 auto;
-  padding: calc(3px * var(--pulse-scale, 1)) 14px;
+  padding: calc(3px * var(--pulse-scale-h, 1)) 14px;
   /* Rounded rectangle (16px corners): a normal card radius, not a pill or
      an ellipse. A hairline border keeps the outline defined while the
      layered glass background (top-lit over the dark base) carries the
@@ -41,7 +42,7 @@ body[data-ds-dark-theme] .wrap {
   min-width: 0;
   /* Height scales with --pulse-scale (the user's drag), so bars grow/shrink
      proportionally; BAR_PAD_Y 3 keeps a little breathing room. */
-  height: calc(30px * var(--pulse-scale, 1));
+  height: calc(30px * var(--pulse-scale-h, 1));
   display: block;
 }
 
@@ -54,19 +55,19 @@ body[data-ds-dark-theme] .wrap {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-height: calc(37px * var(--pulse-scale, 1));
-  gap: calc(3px * var(--pulse-scale, 1)) calc(6px * var(--pulse-scale, 1));
+  max-height: calc(37px * var(--pulse-scale-h, 1));
+  gap: calc(3px * var(--pulse-scale-h, 1)) calc(6px * var(--pulse-scale-h, 1));
   max-width: 70%;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: calc(4px * var(--pulse-scale, 1));
-  padding: calc(1px * var(--pulse-scale, 1)) calc(7px * var(--pulse-scale, 1));
+  gap: calc(4px * var(--pulse-scale-h, 1));
+  padding: calc(1px * var(--pulse-scale-h, 1)) calc(7px * var(--pulse-scale-h, 1));
   border-radius: 999px;
-  font-size: calc(10px * var(--pulse-scale, 1));
-  line-height: calc(13px * var(--pulse-scale, 1));
+  font-size: calc(10px * var(--pulse-scale-h, 1));
+  line-height: calc(13px * var(--pulse-scale-h, 1));
   white-space: nowrap;
   color: rgba(226, 232, 240, 0.82);
   background: rgba(255, 255, 255, 0.07);
@@ -79,8 +80,8 @@ body[data-ds-dark-theme] .chip {
 }
 
 .dot {
-  width: calc(5px * var(--pulse-scale, 1));
-  height: calc(5px * var(--pulse-scale, 1));
+  width: calc(5px * var(--pulse-scale-h, 1));
+  height: calc(5px * var(--pulse-scale-h, 1));
   border-radius: 50%;
   flex: none;
 }
@@ -93,16 +94,16 @@ body[data-ds-dark-theme] .chip {
   right: 0;
   /* A small top-right corner notch — big enough to grab, small enough to
      stay clear of the chips below it. */
-  width: calc(26px * var(--pulse-scale, 1));
-  height: calc(15px * var(--pulse-scale, 1));
+  width: calc(26px * var(--pulse-scale-h, 1));
+  height: calc(15px * var(--pulse-scale-h, 1));
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: flex-start;
-  gap: calc(2px * var(--pulse-scale, 1));
-  padding: calc(4px * var(--pulse-scale, 1)) calc(5px * var(--pulse-scale, 1)) 0 0;
+  gap: calc(2px * var(--pulse-scale-h, 1));
+  padding: calc(4px * var(--pulse-scale-h, 1)) calc(5px * var(--pulse-scale-h, 1)) 0 0;
   box-sizing: border-box;
-  cursor: ns-resize;
+  cursor: nesw-resize;
   opacity: 0;
   transition: opacity 0.15s ease;
 }
@@ -111,8 +112,8 @@ body[data-ds-dark-theme] .chip {
   opacity: 0.5;
 }
 .handleDot {
-  width: calc(3px * var(--pulse-scale, 1));
-  height: calc(3px * var(--pulse-scale, 1));
+  width: calc(3px * var(--pulse-scale-h, 1));
+  height: calc(3px * var(--pulse-scale-h, 1));
   border-radius: 50%;
   background: currentColor;
   color: rgba(255, 255, 255, 0.7);

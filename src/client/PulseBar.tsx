@@ -50,29 +50,34 @@ export const TYPING_CHIP_FLOOR = 2
 /** Chips re-render cadence and stuck-check cadence. */
 export const SUMMARY_INTERVAL_MS = 250
 
-/** Vertical size factor: users may shrink or grow the whole strip. Bounded so
- *  the bar stays usable (and the chips never overwhelm the composer). */
-export const SCALE_MIN = 0.6
-export const SCALE_MAX = 1.6
-/** Scale change per pointer-pixel of vertical drag. */
+/** Size factors (width × height), each bounded so the strip stays usable. */
+export const SCALE_W_MIN = 0.5
+export const SCALE_W_MAX = 1.5
+export const SCALE_H_MIN = 0.6
+export const SCALE_H_MAX = 1.6
+/** Size change per pointer-pixel of drag (both axes). */
 export const SCALE_PER_PX = 0.008
 
-/** localStorage key for the per-user size preference. */
-const SCALE_STORAGE_KEY = 'dsh-pulse:scale'
+/** localStorage keys for the per-user size preference. */
+const SCALE_W_KEY = 'dsh-pulse:scale-w'
+const SCALE_H_KEY = 'dsh-pulse:scale-h'
 
-/** Clamp a raw scale into the supported range. */
-function clampScale(value: number): number {
-  if (value < SCALE_MIN) return SCALE_MIN
-  if (value > SCALE_MAX) return SCALE_MAX
+/** Clamp a value into a range. */
+function clamp(value: number, min: number, max: number): number {
+  if (value < min) return min
+  if (value > max) return max
   return value
 }
 
-/** Load the persisted size preference (default 1). */
-function loadScale(): number {
+/** Load one persisted scale (default 1). */
+function loadScale(key: string, min: number, max: number): number {
   if (typeof localStorage === 'undefined') return 1
-  const raw = Number(localStorage.getItem(SCALE_STORAGE_KEY))
-  return Number.isFinite(raw) && raw > 0 ? clampScale(raw) : 1
+  const raw = Number(localStorage.getItem(key))
+  return Number.isFinite(raw) && raw > 0 ? clamp(raw, min, max) : 1
 }
+
+const loadScaleW = (): number => loadScale(SCALE_W_KEY, SCALE_W_MIN, SCALE_W_MAX)
+const loadScaleH = (): number => loadScale(SCALE_H_KEY, SCALE_H_MIN, SCALE_H_MAX)
 
 /** One tick's chip/aria summary. */
 export interface PulseSummary {
@@ -138,13 +143,29 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
 
   const [network, setNetwork] = useState<NetworkState>('connecting')
   const [summary, setSummary] = useState<PulseSummary>(EMPTY_SUMMARY)
-  const [scale, setScale] = useState<number>(loadScale)
-  const dragRef = useRef<{ y: number; scale: number } | null>(null)
+  const [scaleW, setScaleW] = useState<number>(loadScaleW)
+  const [scaleH, setScaleH] = useState<number>(loadScaleH)
+  const dragRef = useRef<{ x: number; y: number; w: number; h: number } | null>(null)
+  // Last non-default scales, so double-click can toggle back to them from 1.
+  const lastStretchRef = useRef<{ w: number; h: number }>({
+    w: scaleW !== 1 ? scaleW : 1,
+    h: scaleH !== 1 ? scaleH : 1,
+  })
 
   // Persist the per-user size preference on every change (drag or keyboard).
   useEffect(() => {
-    try { localStorage.setItem('dsh-pulse:scale', String(scale)) } catch { /* ignore */ }
-  }, [scale])
+    try {
+      localStorage.setItem(SCALE_W_KEY, String(scaleW))
+      localStorage.setItem(SCALE_H_KEY, String(scaleH))
+    } catch { /* ignore */ }
+  }, [scaleW, scaleH])
+
+  // Remember the most recently stretched (non-default) scales.
+  useEffect(() => {
+    if (Math.abs(scaleW - 1) > 0.01 || Math.abs(scaleH - 1) > 0.01) {
+      lastStretchRef.current = { w: scaleW, h: scaleH }
+    }
+  }, [scaleW, scaleH])
 
   // Feed the meter from snapshot deltas. The dock dispatcher re-renders this
   // entry on every session-store publish (partial chunks land at animation
@@ -332,7 +353,7 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
       role="group"
       aria-label={ariaLabel}
       data-dsh-pulse
-      style={{ '--pulse-scale': String(scale) } as CSSProperties}
+      style={{ '--pulse-scale-w': String(scaleW), '--pulse-scale-h': String(scaleH) } as CSSProperties}
     >
       <canvas ref={canvasRef} className={css.canvas} aria-hidden="true" />
       <div className={css.chips}>
@@ -380,32 +401,45 @@ export const PulseBar = memo(function PulseBar({ session, input, connection, t }
         )}
       </div>
       {/* Corner resize: an absolute, hover-revealed drag zone at the top-right
-          — no layout footprint; drag up/down (or arrow keys) to scale. */}
+          — no layout footprint. Drag diagonally to scale both axes (or mostly
+          vertical = height, mostly horizontal = width); arrow keys adjust. */}
       <div
         className={css.resize}
         role="slider"
         aria-label={t('size.drag')}
-        aria-valuemin={SCALE_MIN * 100}
-        aria-valuemax={SCALE_MAX * 100}
-        aria-valuenow={Math.round(scale * 100)}
+        aria-valuemin={SCALE_H_MIN * 100}
+        aria-valuemax={SCALE_H_MAX * 100}
+        aria-valuenow={Math.round(scaleH * 100)}
+        aria-valuetext={`${Math.round(scaleW * 100)}% × ${Math.round(scaleH * 100)}%`}
         tabIndex={0}
         title={t('size.drag')}
         onPointerDown={(e) => {
-          dragRef.current = { y: e.clientY, scale }
+          dragRef.current = { x: e.clientX, y: e.clientY, w: scaleW, h: scaleH }
           e.currentTarget.setPointerCapture(e.pointerId)
         }}
         onPointerMove={(e) => {
           const d = dragRef.current
           if (d === null) return
-          // Dragging up (negative dy) grows the strip, like pulling a
-          // top-right corner handle upward.
-          setScale(clampScale(d.scale - (e.clientY - d.y) * SCALE_PER_PX))
+          // Right/left scales width; up/down scales height (so a diagonal
+          // drag adjusts both, the classic top-right corner-resize gesture).
+          setScaleW(clamp((d.w + (e.clientX - d.x) * SCALE_PER_PX), SCALE_W_MIN, SCALE_W_MAX))
+          setScaleH(clamp((d.h - (e.clientY - d.y) * SCALE_PER_PX), SCALE_H_MIN, SCALE_H_MAX))
         }}
         onPointerUp={() => { dragRef.current = null }}
         onPointerCancel={() => { dragRef.current = null }}
+        onDoubleClick={() => {
+          // Toggle: stretched -> default(1); at default -> last stretched.
+          if (Math.abs(scaleW - 1) < 0.01 && Math.abs(scaleH - 1) < 0.01) {
+            setScaleW(lastStretchRef.current.w)
+            setScaleH(lastStretchRef.current.h)
+          } else {
+            setScaleW(1)
+            setScaleH(1)
+          }
+        }}
         onKeyDown={(e) => {
-          if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); setScale(s => clampScale(s + 0.05)) }
-          else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); setScale(s => clampScale(s - 0.05)) }
+          if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); setScaleH(s => clamp(s + 0.05, SCALE_H_MIN, SCALE_H_MAX)) }
+          else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); setScaleH(s => clamp(s - 0.05, SCALE_H_MIN, SCALE_H_MAX)) }
         }}
       >
         <span className={css.handleDot} />
