@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2233" stop-opacity="0.88"/>
+      <stop offset="0.45" stop-color="#10152a" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#0b0f1d" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="streak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="bars" x1="90" y1="0" x2="422" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#06b6d4"/>
+      <stop offset="0.5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="robot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#aab9d8" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#7d8fb3" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="40" y="40" width="432" height="432" rx="120" fill="url(#bloom)" opacity="0.5"/>
+
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#glass)"/>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#sheen)"/>
+  <path d="M120 40 L300 40 L200 472 L90 472 Z" fill="url(#streak)"/>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="none"
+        stroke="rgba(255,255,255,0.10)" stroke-width="2"/>
+
+  <!-- THINKING WAVES from the robot's head -->
+  <g fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round">
+    <path d="M120 136 A30 30 0 0 1 144 160" opacity="0.9"/>
+    <path d="M126 122 A46 46 0 0 1 158 154" opacity="0.6"/>
+    <path d="M132 108 A62 62 0 0 1 172 148" opacity="0.35"/>
+  </g>
+
+  <!-- ROBOT (agent) thinking — small, sits just above the short left bars -->
+  <g fill="url(#robot)" stroke="rgba(176,192,224,0.6)" stroke-width="3.5" stroke-linejoin="round">
+    <line x1="114" y1="170" x2="114" y2="152" stroke="rgba(176,192,224,0.6)" stroke-width="3.5"/>
+    <circle cx="114" cy="146" r="7" fill="#8b5cf6" stroke="none"/>
+    <rect x="66" y="170" width="96" height="92" rx="30"/>
+    <rect x="80" y="190" width="68" height="36" rx="18"/>
+    <circle cx="100" cy="208" r="7" fill="#38bdf8"/>
+    <circle cx="128" cy="208" r="7" fill="#38bdf8"/>
+    <line x1="98" y1="242" x2="130" y2="242" stroke="rgba(176,192,224,0.6)" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- USER INPUT: a small, transparent terminal prompt (>_) in the empty top-right -->
+  <g fill="none" stroke="rgba(255,255,255,0.42)" stroke-width="7"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M404 94 L422 110 L404 126"/>
+    <line x1="432" y1="126" x2="458" y2="126"/>
+  </g>
+
+  <!-- LIGHT BARS (光柱律动): full-width; short on the left, rising to the right -->
+  <g fill="url(#bars)" opacity="0.82">
+    <rect x="90"  y="355" width="20" height="85"/>
+    <rect x="116" y="325" width="20" height="115"/>
+    <rect x="142" y="345" width="20" height="95"/>
+    <rect x="168" y="310" width="20" height="130"/>
+    <rect x="194" y="330" width="20" height="110"/>
+    <rect x="220" y="210" width="20" height="230"/>
+    <rect x="246" y="270" width="20" height="170"/>
+    <rect x="272" y="190" width="20" height="250"/>
+    <rect x="298" y="240" width="20" height="200"/>
+    <rect x="324" y="215" width="20" height="225"/>
+    <rect x="350" y="280" width="20" height="160"/>
+    <rect x="376" y="315" width="20" height="125"/>
+    <rect x="402" y="345" width="20" height="95"/>
+  </g>
+
+  <!-- WAVE LINE riding over the bars (rhythm/soundwave) — thin, kept below the robot's chin -->
+  <path d="M90 345
+           C 116 300, 138 300, 164 345
+           C 190 390, 214 390, 240 345
+           C 266 300, 290 300, 316 345
+           C 342 390, 366 390, 392 345
+           C 404 322, 414 322, 422 345"
+        fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="86" y="444" width="340" height="4" rx="2" fill="rgba(255,255,255,0.14)"/>
+</svg>
